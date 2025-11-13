@@ -303,6 +303,10 @@ func (s *RaftStore) GetLeader() int {
 	if err != nil {
 		return -1
 	}
+	// bounds check for int32
+	if id < int(math.MinInt32) || id > int(math.MaxInt32) {
+		return -1
+	}
 	return id
 }
 
