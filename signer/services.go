@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"math"
 
 	cometlog "github.com/cometbft/cometbft/libs/log"
 	cometos "github.com/cometbft/cometbft/libs/os"
@@ -34,6 +35,10 @@ func RequireNotRunning(log cometlog.Logger, pidFilePath string) error {
 			pidFilePath, err)
 	}
 
+	// Ensure pid value is in bounds for int and for PIDs
+	if pid <= 0 || pid > int64(math.MaxInt) {
+		return fmt.Errorf("parsed PID %d from file %s is out of valid int range", pid, pidFilePath)
+	}
 	if int(pid) == os.Getpid() {
 		panic(fmt.Errorf("error checking PID file: %s, PID: %d matches current process",
 			pidFilePath, pid))
